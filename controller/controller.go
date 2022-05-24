@@ -7,6 +7,9 @@ import (
 	"helle/entity/response"
 	"helle/usecase"
 	"net/http"
+	"strings"
+
+	"github.com/google/uuid"
 )
 
 type Controller interface {
@@ -75,38 +78,44 @@ func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) 
 	w.Header().Set("Content-Type", "application/json")
 	//validate = validator.New()
 
-	var user *response.TblUserAccount
+	var user request.User
 	json.NewDecoder(r.Body).Decode(&user)
 
-	fmt.Println("user===", user.Account)
-	User, err := c.usecase.GetUserPhoneNumber(user.Account)
+	fmt.Println("user===", user.AccountNumber)
+	User, err := c.usecase.GetUserPhoneNumber(&user)
 	// fmt.Println("user===", reqnum)
 	if err != nil {
 		return
 	}
 
-	ResponData := &response.InquiryHp{
+	ResponData := response.InquiryHp{
 		PhoneNumber:  User.CellphoneNumber,
 		EmailAddress: User.EmailAddress,
 	}
-	ResponDatas := &response.InquiryHp{
+	ResponDatas := response.InquiryHp{
 		PhoneNumber:  User.CellphoneNumber,
 		EmailAddress: User.EmailAddress,
 	}
 
-	if ResponData != nil {
-		Response := &response.Inquiry{
+	respon_id := uuid.New().String()
+	uuidWithoutHyphens := strings.Replace(respon_id, "-", "", -1)
+	if User != nil {
+		Response := response.Inquiry{
 			ResponseCode:   "00",
 			ResponseDesc:   "Get Phone By Accnum Success",
-			ResponseRefnum: User.ResponseId,
-			ResponseData:   *ResponData,
+			ResponseId:     uuidWithoutHyphens,
+			ResponseRefnum: user.RequestRefnum,
+			ResponseData:   ResponData,
 		}
 
 		json.NewEncoder(w).Encode(Response)
 	} else {
-		Response := &response.Inquiry{
-			ResponseCode: "01",
-			ResponseData: *ResponDatas,
+		Response := response.Inquiry{
+			ResponseCode:   "AN",
+			ResponseDesc:   "Account Number Not Found",
+			ResponseId:     "",
+			ResponseRefnum: "",
+			ResponseData:   ResponDatas,
 		}
 		json.NewEncoder(w).Encode(Response)
 	}

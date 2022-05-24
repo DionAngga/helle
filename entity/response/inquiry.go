@@ -3,9 +3,9 @@ package response
 import "time"
 
 type Inquiry struct {
-	ResponseCode string `json:"response_code"`
-	ResponseDesc string `json:"response_desc"`
-	//ResponseId     string                 `json:"response_id"`
+	ResponseCode   string    `json:"response_code"`
+	ResponseDesc   string    `json:"response_desc"`
+	ResponseId     string    `json:"response_id"`
 	ResponseRefnum string    `json:"response_refnum"`
 	ResponseData   InquiryHp `json:"response_data"`
 }
