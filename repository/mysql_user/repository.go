@@ -11,6 +11,7 @@ import (
 type Repository interface {
 	FindUser(client string) (*request.User, error)
 	FindProfile(Username string) (*response.TblUserProfile, error)
+	FindUsername(account string) (*response.TblUserAccount, error)
 }
 
 type repository struct {
@@ -39,4 +40,13 @@ func (r *repository) FindProfile(username string) (*response.TblUserProfile, err
 		return &profile, err
 	}
 	return &profile, nil
+}
+
+func (r *repository) FindUsername(account string) (*response.TblUserAccount, error) {
+	var acc response.TblUserAccount
+	err := r.DB.Where("account = ?", account).Find(&acc).Error
+	if err != nil {
+		return nil, err
+	}
+	return &acc, nil
 }

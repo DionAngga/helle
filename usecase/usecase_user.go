@@ -9,6 +9,8 @@ import (
 type Usecase interface {
 	GetInquiry(client request.User) (*request.User, error)
 	GetProfile(username *request.Name) (*response.TblUserProfile, error)
+	GetUsername(account string) (*response.TblUserAccount, error)
+	GetUserPhoneNumber(account string) (*response.TblUserProfile, error)
 }
 
 type usercase struct {
@@ -35,4 +37,25 @@ func (u *usercase) GetProfile(username *request.Name) (*response.TblUserProfile,
 		return nil, err
 	}
 	return user, nil
+}
+
+func (u *usercase) GetUsername(account string) (*response.TblUserAccount, error) {
+	//input := account
+	user, err := u.repository.FindUsername(account)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (u *usercase) GetUserPhoneNumber(account string) (*response.TblUserProfile, error) {
+	user, err := u.repository.FindUsername(account)
+	if err != nil {
+		return nil, err
+	}
+	client, err := u.repository.FindProfile(user.Username)
+	if err != nil {
+		return nil, err
+	}
+	return client, nil
 }

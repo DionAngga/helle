@@ -32,6 +32,8 @@ func initializeRoutes() {
 	userController := controller.NewController(userUsecase)
 	r.HandleFunc("/user/inquiry", userController.GetInquirybyaccount).Methods("POST")
 	r.HandleFunc("/user/profile", userController.GetProfilebyUsername).Methods("POST")
+	r.HandleFunc("/user/username_byaccount", userController.GetUsernameByAccount).Methods("POST")
+	r.HandleFunc("/user/inquiry_hp_byusername", userController.GetUserPhoneNumber).Methods("POST")
 
 	log.Println("Database connected", port)
 	log.Fatal(http.ListenAndServe(port, r))
