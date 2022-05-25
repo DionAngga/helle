@@ -7,5 +7,5 @@ type User struct {
 }
 
 type Name struct {
-	Username string `json:"username" valid:"required"`
+	Username string `json:"username" validate:"required"`
 }

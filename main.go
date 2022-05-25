@@ -30,6 +30,7 @@ func initializeRoutes() {
 	userRepository := repo.NewRepository(db)
 	userUsecase := usecase.NewUser(userRepository)
 	userController := controller.NewController(userUsecase)
+	r.HandleFunc("/user/inquirys", userController.PostUser).Methods("POST")
 	r.HandleFunc("/user/inquiry", userController.GetInquirybyaccount).Methods("POST")
 	r.HandleFunc("/user/profile", userController.GetProfilebyUsername).Methods("POST")
 	r.HandleFunc("/user/username_byaccount", userController.GetUsernameByAccount).Methods("POST")
