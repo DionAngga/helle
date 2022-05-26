@@ -29,67 +29,56 @@ func NewController(usecase usecase.Usecase) Controller {
 	return &controller{usecase}
 }
 
-//var users = []request.Name{}
-
 func (c *controller) PostUser(w http.ResponseWriter, r *http.Request) {
-	user := request.Name{}
+	user := request.User{}
 	json.NewDecoder(r.Body).Decode(&user)
-	validate := validator.New()
-	err := validate.Struct(user)
+	valid := validator.New()
+	err := valid.Struct(user)
 	if err != nil {
-		//validationErrors := err.(validator.ValidationErrors)
 		w.Header().Add("Content-Type", "application/json")
-		//w.WriteHeader(http.StatusBadRequest)
-		// bukan ditulis validation error
-		responseBody := response.Validate{Validation: "required", Field: "username"}
-		json.NewEncoder(w).Encode(responseBody)
+		Response := response.Inquiry{
+			ResponseCode: "01",
+			ResponseDesc: "Invalid Request",
+			ResponseId:   "",
+			ResponseData: response.Validate{Validation: "required", Field: "username"},
+		}
+
+		json.NewEncoder(w).Encode(Response)
 
 	}
-	// We don't want an API user to set the ID manually
-	// in a production use case this could be an automatically
-	// ID in the database
-	//users = append(users, user)
-	// w.WriteHeader(http.StatusCreated)
 }
-
-//var validate *validator.Validate
 
 func (c *controller) GetInquirybyaccount(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	//validate = validator.New()
 	var user request.User
 	json.NewDecoder(r.Body).Decode(&user)
 	User, err := c.usecase.GetInquiry(user)
 	if err != nil {
 		return
 	}
-	//fmt.Println("client", User)
 	json.NewEncoder(w).Encode(User)
 }
 
 func (c *controller) GetProfilebyUsername(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	//validate = validator.New()
 	var user *request.Name
+
 	json.NewDecoder(r.Body).Decode(&user)
 	validate := validator.New()
 	errs := validate.Struct(user)
 	if errs != nil {
-		//validationErrors := err.(validator.ValidationErrors)
 		w.Header().Add("Content-Type", "application/json")
-		//w.WriteHeader(http.StatusBadRequest)
-		// bukan ditulis validation error
 		responseBody := response.Validate{Validation: "required", Field: "username"}
 		json.NewEncoder(w).Encode(responseBody)
 
 	} else {
 		User, err := c.usecase.GetProfile(user)
 		if err != nil {
-			responseBody := response.Validate{Validation: "required", Field: "username"}
+			responseBody := response.Validate{Validation: "error", Field: "gorm"}
 			json.NewEncoder(w).Encode(responseBody)
 		}
 		if User.Username == "" {
-			responseBody := response.Validate{Validation: "required", Field: "username"}
+			responseBody := response.Validate{Validation: "error", Field: "username not found"}
 			json.NewEncoder(w).Encode(responseBody)
 		} else {
 			json.NewEncoder(w).Encode(&User)
@@ -99,7 +88,6 @@ func (c *controller) GetProfilebyUsername(w http.ResponseWriter, r *http.Request
 
 func (c *controller) GetUsernameByAccount(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	//validate = validator.New()
 
 	var user *response.TblUserAccount
 	json.NewDecoder(r.Body).Decode(&user)
@@ -118,34 +106,60 @@ func (c *controller) GetUsernameByAccount(w http.ResponseWriter, r *http.Request
 }
 
 func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	//validate = validator.New()
-	var usero *request.User
-
-	json.NewDecoder(r.Body).Decode(&usero)
-	validate := validator.New()
-	errs := validate.Struct(usero)
+	user := request.User{}
+	w.Header().Add("Content-Type", "application/json")
+	json.NewDecoder(r.Body).Decode(&user)
+	valid := validator.New()
+	err := valid.Struct(user)
 	respon_id := uuid.New().String()
 	uuidWithoutHyphens := strings.Replace(respon_id, "-", "", -1)
-	if errs != nil {
-		Response := response.Inquiry{
-			ResponseCode:   "AN",
-			ResponseDesc:   "salah ngga isi parameter",
-			ResponseId:     "",
-			ResponseRefnum: "",
-			ResponseData:   response.Validate{Validation: "required", Field: "username"},
+	if err != nil {
+		if user == (request.User{}) {
+			Response := response.Inquiry{
+				ResponseCode:   "AN",
+				ResponseDesc:   "required validation failed on request",
+				ResponseId:     uuidWithoutHyphens,
+				ResponseRefnum: user.RequestRefnum,
+				ResponseData:   response.Validate{Validation: "required", Field: "all request"},
+			}
+			json.NewEncoder(w).Encode(Response)
+		} else if user.Client == "" {
+			Response := response.Inquiry{
+				ResponseCode:   "VE",
+				ResponseDesc:   "required validation failed on client",
+				ResponseId:     uuidWithoutHyphens,
+				ResponseRefnum: user.RequestRefnum,
+				ResponseData:   response.Validate{Validation: "required", Field: "client"},
+			}
+			json.NewEncoder(w).Encode(Response)
+		} else if user.AccountNumber == "" {
+			Response := response.Inquiry{
+				ResponseCode:   "VE",
+				ResponseDesc:   "required validation failed on account_number",
+				ResponseId:     uuidWithoutHyphens,
+				ResponseRefnum: user.RequestRefnum,
+				ResponseData:   response.Validate{Validation: "required", Field: "account_number"},
+			}
+			json.NewEncoder(w).Encode(Response)
+		} else if user.RequestRefnum == "" {
+			Response := response.Inquiry{
+				ResponseCode:   "VE",
+				ResponseDesc:   "required validation failed on request_refnum",
+				ResponseId:     uuidWithoutHyphens,
+				ResponseRefnum: user.RequestRefnum,
+				ResponseData:   response.Validate{Validation: "required", Field: "request_refnum"},
+			}
+			json.NewEncoder(w).Encode(Response)
 		}
 
-		json.NewEncoder(w).Encode(Response)
-
 	} else {
-		User, err := c.usecase.GetUserPhoneNumber(usero)
+		User, err := c.usecase.GetUserPhoneNumber(&user)
 		if err != nil {
 			Response := response.Inquiry{
 				ResponseCode:   "00",
 				ResponseDesc:   "error di gorm",
-				ResponseId:     uuidWithoutHyphens,
-				ResponseRefnum: usero.RequestRefnum,
+				ResponseId:     "",
+				ResponseRefnum: user.RequestRefnum,
 				ResponseData:   response.Validate{Validation: "required", Field: "username"},
 			}
 			json.NewEncoder(w).Encode(Response)
@@ -153,10 +167,10 @@ func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) 
 		if User.Username == "" {
 			Response := response.Inquiry{
 				ResponseCode:   "AN",
-				ResponseDesc:   "error salah isi",
-				ResponseId:     "",
-				ResponseRefnum: "",
-				ResponseData:   response.Validate{},
+				ResponseDesc:   "Account Number Not Found",
+				ResponseId:     uuidWithoutHyphens,
+				ResponseRefnum: user.RequestRefnum,
+				ResponseData:   response.Emtpy{},
 			}
 
 			json.NewEncoder(w).Encode(Response)
@@ -165,7 +179,7 @@ func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) 
 				ResponseCode:   "00",
 				ResponseDesc:   "Get Phone By Accnum Success",
 				ResponseId:     uuidWithoutHyphens,
-				ResponseRefnum: usero.RequestRefnum,
+				ResponseRefnum: user.RequestRefnum,
 				ResponseData: response.InquiryHp{
 					PhoneNumber:  User.CellphoneNumber,
 					EmailAddress: User.EmailAddress,

@@ -1,9 +1,9 @@
 package request
 
 type User struct {
-	Client        string `json:"client" valid:"required"`
-	AccountNumber string `json:"account_number"`
-	RequestRefnum string `json:"request_refnum"`
+	Client        string `json:"client" validate:"required"`
+	AccountNumber string `json:"account_number" validate:"required"`
+	RequestRefnum string `json:"request_refnum" validate:"required"`
 }
 
 type Name struct {

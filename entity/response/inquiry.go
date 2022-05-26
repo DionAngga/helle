@@ -50,3 +50,5 @@ type Validate struct {
 	Validation string `json:"validation"`
 	Field      string `json:"field"`
 }
+
+type Emtpy struct{}
