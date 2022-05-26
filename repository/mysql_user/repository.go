@@ -1,7 +1,6 @@
 package repositorymysql
 
 import (
-	"fmt"
 	"helle/entity/request"
 	"helle/entity/response"
 
@@ -28,7 +27,6 @@ func (r *repository) FindUser(client string) (*request.User, error) {
 	if err != nil {
 		return &inquiry, err
 	}
-	fmt.Println("inquiryy", inquiry)
 
 	return &inquiry, nil
 }
