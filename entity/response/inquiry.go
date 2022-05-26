@@ -3,11 +3,11 @@ package response
 import "time"
 
 type Inquiry struct {
-	ResponseCode   string    `json:"response_code"`
-	ResponseDesc   string    `json:"response_desc"`
-	ResponseId     string    `json:"response_id"`
-	ResponseRefnum string    `json:"response_refnum"`
-	ResponseData   InquiryHp `json:"response_data"`
+	ResponseCode   string      `json:"response_code"`
+	ResponseDesc   string      `json:"response_desc"`
+	ResponseId     string      `json:"response_id"`
+	ResponseRefnum string      `json:"response_refnum"`
+	ResponseData   interface{} `json:"response_data"`
 }
 
 type TblUserProfile struct {
@@ -45,3 +45,10 @@ type InquiryHp struct {
 type Name struct {
 	Username string `json:"username"`
 }
+
+type Validate struct {
+	Validation string `json:"validation"`
+	Field      string `json:"field"`
+}
+
+type Emtpy struct{}

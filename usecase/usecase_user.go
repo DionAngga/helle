@@ -40,7 +40,6 @@ func (u *usercase) GetProfile(username *request.Name) (*response.TblUserProfile,
 }
 
 func (u *usercase) GetUsername(account string) (*response.TblUserAccount, error) {
-	//input := account
 	user, err := u.repository.FindUsername(account)
 	if err != nil {
 		return nil, err
