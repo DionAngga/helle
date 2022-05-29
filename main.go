@@ -18,7 +18,7 @@ import (
 
 const port string = ":8080"
 
-func initializeRoutes() {
+func main() {
 	r := mux.NewRouter()
 
 	db, err := gorm.Open(mysql.Open("root:@tcp(localhost:3306)/helle?charset=utf8mb4&parseTime=True&loc=Local"), &gorm.Config{})
@@ -39,8 +39,4 @@ func initializeRoutes() {
 	log.Println("Database connected", port)
 	log.Fatal(http.ListenAndServe(port, r))
 
-}
-
-func main() {
-	initializeRoutes()
 }
