@@ -114,16 +114,7 @@ func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) 
 	respon_id := uuid.New().String()
 	uuidWithoutHyphens := strings.Replace(respon_id, "-", "", -1)
 	if err != nil {
-		if user == (request.User{}) {
-			Response := response.Inquiry{
-				ResponseCode:   "AN",
-				ResponseDesc:   "required validation failed on request",
-				ResponseId:     uuidWithoutHyphens,
-				ResponseRefnum: user.RequestRefnum,
-				ResponseData:   response.Validate{Validation: "required", Field: "all request"},
-			}
-			json.NewEncoder(w).Encode(Response)
-		} else if user.Client == "" {
+		if user.Client == "" {
 			Response := response.Inquiry{
 				ResponseCode:   "VE",
 				ResponseDesc:   "required validation failed on client",
@@ -151,7 +142,6 @@ func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) 
 			}
 			json.NewEncoder(w).Encode(Response)
 		}
-
 	} else {
 		User, err := c.usecase.GetUserPhoneNumber(&user)
 		if err != nil {
