@@ -1,23 +1,23 @@
 package usecase
 
 import (
+	"helle/entity/database"
 	"helle/entity/request"
-	"helle/entity/response"
-	repo "helle/repository/mysql_user"
+	repo "helle/repository/database"
 )
 
 type Usecase interface {
 	GetInquiry(client request.User) (*request.User, error)
-	GetProfile(username *request.Name) (*response.TblUserProfile, error)
-	GetUsername(account string) (*response.TblUserAccount, error)
-	GetUserPhoneNumber(account *request.User) (*response.TblUserProfile, error)
+	GetProfile(username *request.Name) (*database.TblUserProfile, error)
+	GetUsername(account string) (*database.TblUserAccount, error)
+	GetUserPhoneNumber(account *request.User) (*database.TblUserProfile, error)
 }
 
 type usercase struct {
 	repository repo.Repository
 }
 
-func NewUser(repository repo.Repository) *usercase {
+func New(repository repo.Repository) *usercase {
 	return &usercase{repository}
 }
 
@@ -30,7 +30,7 @@ func (u *usercase) GetInquiry(client request.User) (*request.User, error) {
 	return user, nil
 }
 
-func (u *usercase) GetProfile(username *request.Name) (*response.TblUserProfile, error) {
+func (u *usercase) GetProfile(username *request.Name) (*database.TblUserProfile, error) {
 	input := username
 	user, err := u.repository.FindProfile(input.Username)
 	if err != nil {
@@ -39,7 +39,7 @@ func (u *usercase) GetProfile(username *request.Name) (*response.TblUserProfile,
 	return user, nil
 }
 
-func (u *usercase) GetUsername(account string) (*response.TblUserAccount, error) {
+func (u *usercase) GetUsername(account string) (*database.TblUserAccount, error) {
 	user, err := u.repository.FindUsername(account)
 	if err != nil {
 		return nil, err
@@ -47,7 +47,7 @@ func (u *usercase) GetUsername(account string) (*response.TblUserAccount, error)
 	return user, nil
 }
 
-func (u *usercase) GetUserPhoneNumber(account *request.User) (*response.TblUserProfile, error) {
+func (u *usercase) GetUserPhoneNumber(account *request.User) (*database.TblUserProfile, error) {
 	user, err := u.repository.FindUsername(account.AccountNumber)
 	if err != nil {
 		return nil, err
