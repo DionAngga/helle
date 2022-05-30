@@ -37,7 +37,7 @@ func (c *controller) PostUser(w http.ResponseWriter, r *http.Request) {
 	err := valid.Struct(user)
 	if err != nil {
 		w.Header().Add("Content-Type", "application/json")
-		Response := response.Inquiry{
+		Response := response.Response{
 			ResponseCode: "01",
 			ResponseDesc: "Invalid Request",
 			ResponseId:   "",
@@ -116,37 +116,37 @@ func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) 
 	uuidWithoutHyphens := strings.Replace(respon_id, "-", "", -1)
 	if err != nil {
 		if user.Client == "" {
-			Response := response.Inquiry{
+			Response := response.Response{
 				ResponseCode:   "VE",
 				ResponseDesc:   "required validation failed on client",
 				ResponseId:     uuidWithoutHyphens,
 				ResponseRefnum: user.RequestRefnum,
-				ResponseData:   response.Validate{Validation: "required", Field: "client"},
+				ResponseData:   err.Error(),
 			}
 			json.NewEncoder(w).Encode(Response)
 		} else if user.AccountNumber == "" {
-			Response := response.Inquiry{
+			Response := response.Response{
 				ResponseCode:   "VE",
-				ResponseDesc:   "required validation failed on account_number",
+				ResponseDesc:   "fail on validation",
 				ResponseId:     uuidWithoutHyphens,
 				ResponseRefnum: user.RequestRefnum,
-				ResponseData:   response.Validate{Validation: "required", Field: "account_number"},
+				ResponseData:   err.Error(),
 			}
 			json.NewEncoder(w).Encode(Response)
 		} else if user.RequestRefnum == "" {
-			Response := response.Inquiry{
+			Response := response.Response{
 				ResponseCode:   "VE",
 				ResponseDesc:   "required validation failed on request_refnum",
 				ResponseId:     uuidWithoutHyphens,
 				ResponseRefnum: user.RequestRefnum,
-				ResponseData:   response.Validate{Validation: "required", Field: "request_refnum"},
+				ResponseData:   err.Error(),
 			}
 			json.NewEncoder(w).Encode(Response)
 		}
 	} else {
 		User, err := c.usecase.GetUserPhoneNumber(&user)
 		if err != nil {
-			Response := response.Inquiry{
+			Response := response.Response{
 				ResponseCode:   "00",
 				ResponseDesc:   "error di gorm",
 				ResponseId:     "",
@@ -156,7 +156,7 @@ func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) 
 			json.NewEncoder(w).Encode(Response)
 		}
 		if User.Username == "" {
-			Response := response.Inquiry{
+			Response := response.Response{
 				ResponseCode:   "AN",
 				ResponseDesc:   "Account Number Not Found",
 				ResponseId:     uuidWithoutHyphens,
@@ -166,7 +166,7 @@ func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) 
 
 			json.NewEncoder(w).Encode(Response)
 		} else {
-			Response := response.Inquiry{
+			Response := response.Response{
 				ResponseCode:   "00",
 				ResponseDesc:   "Get Phone By Accnum Success",
 				ResponseId:     uuidWithoutHyphens,
