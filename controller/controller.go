@@ -3,6 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
+	"helle/entity/database"
 	"helle/entity/request"
 	"helle/entity/response"
 	"helle/usecase"
@@ -25,7 +26,7 @@ type controller struct {
 	usecase usecase.Usecase
 }
 
-func NewController(usecase usecase.Usecase) Controller {
+func New(usecase usecase.Usecase) Controller {
 	return &controller{usecase}
 }
 
@@ -89,7 +90,7 @@ func (c *controller) GetProfilebyUsername(w http.ResponseWriter, r *http.Request
 func (c *controller) GetUsernameByAccount(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	var user *response.TblUserAccount
+	var user *database.TblUserAccount
 	json.NewDecoder(r.Body).Decode(&user)
 
 	User, err := c.usecase.GetUsername(user.Account)
