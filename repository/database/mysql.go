@@ -1,23 +1,23 @@
 package repositorymysql
 
 import (
+	"helle/entity/database"
 	"helle/entity/request"
-	"helle/entity/response"
 
 	"gorm.io/gorm"
 )
 
 type Repository interface {
 	FindUser(client string) (*request.User, error)
-	FindProfile(Username string) (*response.TblUserProfile, error)
-	FindUsername(account string) (*response.TblUserAccount, error)
+	FindProfile(Username string) (*database.TblUserProfile, error)
+	FindUsername(account string) (*database.TblUserAccount, error)
 }
 
 type repository struct {
 	DB *gorm.DB
 }
 
-func NewRepository(db *gorm.DB) *repository {
+func New(db *gorm.DB) *repository {
 	return &repository{db}
 }
 
@@ -31,8 +31,8 @@ func (r *repository) FindUser(client string) (*request.User, error) {
 	return &inquiry, nil
 }
 
-func (r *repository) FindProfile(username string) (*response.TblUserProfile, error) {
-	var profile response.TblUserProfile
+func (r *repository) FindProfile(username string) (*database.TblUserProfile, error) {
+	var profile database.TblUserProfile
 	err := r.DB.Where("username = ?", username).Find(&profile).Error
 	if err != nil {
 		return &profile, err
@@ -40,8 +40,8 @@ func (r *repository) FindProfile(username string) (*response.TblUserProfile, err
 	return &profile, nil
 }
 
-func (r *repository) FindUsername(account string) (*response.TblUserAccount, error) {
-	var acc response.TblUserAccount
+func (r *repository) FindUsername(account string) (*database.TblUserAccount, error) {
+	var acc database.TblUserAccount
 	err := r.DB.Where("account = ?", account).Find(&acc).Error
 	if err != nil {
 		return nil, err
