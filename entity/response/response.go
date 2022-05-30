@@ -1,6 +1,6 @@
 package response
 
-type Inquiry struct {
+type Response struct {
 	ResponseCode   string      `json:"response_code"`
 	ResponseDesc   string      `json:"response_desc"`
 	ResponseId     string      `json:"response_id"`
