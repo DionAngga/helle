@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"helle/entity/database"
 	"helle/entity/request"
 	"helle/entity/response"
@@ -15,7 +14,6 @@ import (
 )
 
 type Controller interface {
-	PostUser(w http.ResponseWriter, r *http.Request)
 	GetInquirybyaccount(w http.ResponseWriter, r *http.Request)
 	GetProfilebyUsername(w http.ResponseWriter, r *http.Request)
 	GetUsernameByAccount(w http.ResponseWriter, r *http.Request)
@@ -28,25 +26,6 @@ type controller struct {
 
 func New(usecase usecase.Usecase) Controller {
 	return &controller{usecase}
-}
-
-func (c *controller) PostUser(w http.ResponseWriter, r *http.Request) {
-	user := request.User{}
-	json.NewDecoder(r.Body).Decode(&user)
-	valid := validator.New()
-	err := valid.Struct(user)
-	if err != nil {
-		w.Header().Add("Content-Type", "application/json")
-		Response := response.Response{
-			ResponseCode: "01",
-			ResponseDesc: "Invalid Request",
-			ResponseId:   "",
-			ResponseData: response.Validate{Validation: "required", Field: "username"},
-		}
-
-		json.NewEncoder(w).Encode(Response)
-
-	}
 }
 
 func (c *controller) GetInquirybyaccount(w http.ResponseWriter, r *http.Request) {
@@ -63,15 +42,13 @@ func (c *controller) GetInquirybyaccount(w http.ResponseWriter, r *http.Request)
 func (c *controller) GetProfilebyUsername(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var user *request.Name
-
 	json.NewDecoder(r.Body).Decode(&user)
 	validate := validator.New()
 	errs := validate.Struct(user)
 	if errs != nil {
 		w.Header().Add("Content-Type", "application/json")
-		responseBody := response.Validate{Validation: "required", Field: "username"}
+		responseBody := errs
 		json.NewEncoder(w).Encode(responseBody)
-
 	} else {
 		User, err := c.usecase.GetProfile(user)
 		if err != nil {
@@ -94,16 +71,17 @@ func (c *controller) GetUsernameByAccount(w http.ResponseWriter, r *http.Request
 	json.NewDecoder(r.Body).Decode(&user)
 
 	User, err := c.usecase.GetUsername(user.Account)
-	fmt.Println("user===", User)
 	if err != nil {
-		return
+		responseBody := response.Validate{Validation: "error", Field: "gorm"}
+		json.NewEncoder(w).Encode(responseBody)
 	}
 
-	resp := &response.Name{
-		Username: User.Username,
+	if User.Username == "" {
+		responseBody := response.Validate{Validation: "error", Field: "username not found"}
+		json.NewEncoder(w).Encode(responseBody)
+	} else {
+		json.NewEncoder(w).Encode(User)
 	}
-
-	json.NewEncoder(w).Encode(resp)
 }
 
 func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) {
@@ -115,28 +93,10 @@ func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) 
 	respon_id := uuid.New().String()
 	uuidWithoutHyphens := strings.Replace(respon_id, "-", "", -1)
 	if err != nil {
-		if user.Client == "" {
-			Response := response.Response{
-				ResponseCode:   "VE",
-				ResponseDesc:   "required validation failed on client",
-				ResponseId:     uuidWithoutHyphens,
-				ResponseRefnum: user.RequestRefnum,
-				ResponseData:   err.Error(),
-			}
-			json.NewEncoder(w).Encode(Response)
-		} else if user.AccountNumber == "" {
+		if user.Client == "" || user.AccountNumber == "" || user.RequestRefnum == "" {
 			Response := response.Response{
 				ResponseCode:   "VE",
 				ResponseDesc:   "fail on validation",
-				ResponseId:     uuidWithoutHyphens,
-				ResponseRefnum: user.RequestRefnum,
-				ResponseData:   err.Error(),
-			}
-			json.NewEncoder(w).Encode(Response)
-		} else if user.RequestRefnum == "" {
-			Response := response.Response{
-				ResponseCode:   "VE",
-				ResponseDesc:   "required validation failed on request_refnum",
 				ResponseId:     uuidWithoutHyphens,
 				ResponseRefnum: user.RequestRefnum,
 				ResponseData:   err.Error(),
@@ -147,11 +107,11 @@ func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) 
 		User, err := c.usecase.GetUserPhoneNumber(&user)
 		if err != nil {
 			Response := response.Response{
-				ResponseCode:   "00",
-				ResponseDesc:   "error di gorm",
+				ResponseCode:   "",
+				ResponseDesc:   "error in gorm",
 				ResponseId:     "",
 				ResponseRefnum: user.RequestRefnum,
-				ResponseData:   response.Validate{Validation: "required", Field: "username"},
+				ResponseData:   err,
 			}
 			json.NewEncoder(w).Encode(Response)
 		}
