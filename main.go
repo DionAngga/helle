@@ -30,7 +30,6 @@ func main() {
 	userRepository := repo.New(db)
 	userUsecase := usecase.New(userRepository)
 	userController := controller.New(userUsecase)
-	r.HandleFunc("/user/inquirys", userController.PostUser).Methods("POST")
 	r.HandleFunc("/user/inquiry", userController.GetInquirybyaccount).Methods("POST")
 	r.HandleFunc("/user/profile", userController.GetProfilebyUsername).Methods("POST")
 	r.HandleFunc("/user/username_byaccount", userController.GetUsernameByAccount).Methods("POST")
