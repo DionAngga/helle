@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
-	"helle/auth"
 	"helle/controller"
 	"helle/entity/request"
 	repo "helle/repository/database"
@@ -15,12 +15,29 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 )
 
+func DNS() string {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	return os.Getenv("DNS")
+}
+
+func PORT() string {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	return os.Getenv("PORT")
+}
+
 func main() {
-	PORT := auth.PORT()
+	PORT := PORT()
 	r := mux.NewRouter()
-	DNS := auth.DNS()
+	DNS := DNS()
 	db, err := gorm.Open(mysql.Open(DNS), &gorm.Config{})
 	if err != nil {
 		fmt.Println(err.Error())
