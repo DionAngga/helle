@@ -95,41 +95,45 @@ func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) 
 				ResponseData:   err.Error(),
 			}
 			json.NewEncoder(w).Encode(Response)
-		}
-	} else {
-		User, err := c.usecase.GetUserPhoneNumber(&user)
-		if err != nil {
-			Response := response.Response{
-				ResponseCode:   "",
-				ResponseDesc:   "error in gorm",
-				ResponseId:     "",
-				ResponseRefnum: user.RequestRefnum,
-				ResponseData:   err,
-			}
-			json.NewEncoder(w).Encode(Response)
-		}
-		if User.Username == "" {
-			Response := response.Response{
-				ResponseCode:   "AN",
-				ResponseDesc:   "Account Number Not Found",
-				ResponseId:     uuidWithoutHyphens,
-				ResponseRefnum: user.RequestRefnum,
-				ResponseData:   response.Emtpy{},
-			}
-
-			json.NewEncoder(w).Encode(Response)
-		} else {
-			Response := response.Response{
-				ResponseCode:   "00",
-				ResponseDesc:   "Get Phone By Accnum Success",
-				ResponseId:     uuidWithoutHyphens,
-				ResponseRefnum: user.RequestRefnum,
-				ResponseData: response.InquiryHp{
-					PhoneNumber:  User.CellphoneNumber,
-					EmailAddress: User.EmailAddress,
-				},
-			}
-			json.NewEncoder(w).Encode(&Response)
+			return
 		}
 	}
+
+	User, err := c.usecase.GetUserPhoneNumber(&user)
+	if err != nil {
+		Response := response.Response{
+			ResponseCode:   "",
+			ResponseDesc:   "error in gorm",
+			ResponseId:     "",
+			ResponseRefnum: user.RequestRefnum,
+			ResponseData:   err,
+		}
+		json.NewEncoder(w).Encode(Response)
+		return
+	}
+	if User.Username == "" {
+		Response := response.Response{
+			ResponseCode:   "AN",
+			ResponseDesc:   "Account Number Not Found",
+			ResponseId:     uuidWithoutHyphens,
+			ResponseRefnum: user.RequestRefnum,
+			ResponseData:   response.Emtpy{},
+		}
+		json.NewEncoder(w).Encode(Response)
+		return
+	}
+	if User != nil {
+		Response := response.Response{
+			ResponseCode:   "00",
+			ResponseDesc:   "Get Phone By Accnum Success",
+			ResponseId:     uuidWithoutHyphens,
+			ResponseRefnum: user.RequestRefnum,
+			ResponseData: response.InquiryHp{
+				PhoneNumber:  User.CellphoneNumber,
+				EmailAddress: User.EmailAddress,
+			},
+		}
+		json.NewEncoder(w).Encode(&Response)
+	}
+
 }
