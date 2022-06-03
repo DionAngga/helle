@@ -9,7 +9,7 @@ import (
 	"helle/controller"
 	"helle/entity/request"
 	repo "helle/repository/database"
-	"helle/usecase"
+	usecase "helle/usecase/user_usercase"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

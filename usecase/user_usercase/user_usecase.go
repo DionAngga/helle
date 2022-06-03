@@ -6,15 +6,15 @@ import (
 	repo "helle/repository/database"
 )
 
-type usercase struct {
+type usecase struct {
 	repository repo.Repository
 }
 
-func New(repository repo.Repository) *usercase {
-	return &usercase{repository}
+func New(repository repo.Repository) *usecase {
+	return &usecase{repository}
 }
 
-func (u *usercase) GetInquiry(client request.User) (*request.User, error) {
+func (u *usecase) GetInquiry(client request.User) (*request.User, error) {
 	input := client
 	user, err := u.repository.FindUser(input.Client)
 	if err != nil {
@@ -23,7 +23,7 @@ func (u *usercase) GetInquiry(client request.User) (*request.User, error) {
 	return user, nil
 }
 
-func (u *usercase) GetProfile(username *request.Name) (*database.TblUserProfile, error) {
+func (u *usecase) GetProfile(username *request.Name) (*database.TblUserProfile, error) {
 	input := username
 	user, err := u.repository.FindProfile(input.Username)
 	if err != nil {
@@ -32,7 +32,7 @@ func (u *usercase) GetProfile(username *request.Name) (*database.TblUserProfile,
 	return user, nil
 }
 
-func (u *usercase) GetUsername(account string) (*database.TblUserAccount, error) {
+func (u *usecase) GetUsername(account string) (*database.TblUserAccount, error) {
 	user, err := u.repository.FindUsername(account)
 	if err != nil {
 		return nil, err
@@ -40,7 +40,7 @@ func (u *usercase) GetUsername(account string) (*database.TblUserAccount, error)
 	return user, nil
 }
 
-func (u *usercase) GetUserPhoneNumber(account *request.User) (*database.TblUserProfile, error) {
+func (u *usecase) GetUserPhoneNumber(account *request.User) (*database.TblUserProfile, error) {
 	user, err := u.repository.FindUsername(account.AccountNumber)
 	if err != nil {
 		return nil, err
