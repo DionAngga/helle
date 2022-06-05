@@ -17,6 +17,17 @@ type Name struct {
 	Username string `json:"username"`
 }
 
+type User struct {
+	Client          string `json:"client"`
+	AccountNumber   string `json:"account_number"`
+	Timestamp       string `json:"timestamp"`
+	ResponseRefnum  string `json:"response_refnum"`
+	ResponseId      string `json:"response_id"`
+	CellphoneNumber string `json:"cellphone_number"`
+	EmailAddress    string `json:"email_address"`
+	Refnum          string `json:"refnum"`
+}
+
 type Validate struct {
 	Validation string `json:"validation"`
 	Field      string `json:"field"`
