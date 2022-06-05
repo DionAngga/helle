@@ -3,20 +3,22 @@ package usecase
 import (
 	"helle/entity/database"
 	"helle/entity/request"
-	repo "helle/repository/database"
+	repositorymysql "helle/repository/database"
 )
 
 type usecase struct {
-	repository repo.Repository
+	userRepository    repositorymysql.UserRepository
+	accRepository     repositorymysql.UserAccountRepository
+	profileRepository repositorymysql.UserProfileRepository
 }
 
-func New(repository repo.Repository) *usecase {
-	return &usecase{repository}
+func New(repositorys repositorymysql.UserRepository, repositoryacc repositorymysql.UserAccountRepository, respositoryprofile repositorymysql.UserProfileRepository) *usecase {
+	return &usecase{repositorys, repositoryacc, respositoryprofile}
 }
 
 func (u *usecase) GetInquiry(client request.User) (*request.User, error) {
 	input := client
-	user, err := u.repository.FindUser(input.Client)
+	user, err := u.userRepository.FindUser(input.Client)
 	if err != nil {
 		return nil, err
 	}
@@ -25,7 +27,7 @@ func (u *usecase) GetInquiry(client request.User) (*request.User, error) {
 
 func (u *usecase) GetProfile(username *request.Name) (*database.TblUserProfile, error) {
 	input := username
-	user, err := u.repository.FindProfile(input.Username)
+	user, err := u.profileRepository.FindProfile(input.Username)
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +35,7 @@ func (u *usecase) GetProfile(username *request.Name) (*database.TblUserProfile, 
 }
 
 func (u *usecase) GetUsername(account string) (*database.TblUserAccount, error) {
-	user, err := u.repository.FindUsername(account)
+	user, err := u.accRepository.FindUsername(account)
 	if err != nil {
 		return nil, err
 	}
@@ -41,11 +43,11 @@ func (u *usecase) GetUsername(account string) (*database.TblUserAccount, error) 
 }
 
 func (u *usecase) GetUserPhoneNumber(account *request.User) (*database.TblUserProfile, error) {
-	user, err := u.repository.FindUsername(account.AccountNumber)
+	user, err := u.accRepository.FindUsername(account.AccountNumber)
 	if err != nil {
 		return nil, err
 	}
-	client, err := u.repository.FindProfile(user.Username)
+	client, err := u.profileRepository.FindProfile(user.Username)
 	if err != nil {
 		return nil, err
 	}

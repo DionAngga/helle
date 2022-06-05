@@ -2,9 +2,7 @@ package controller
 
 import "net/http"
 
-type Controller interface {
-	GetInquirybyaccount(w http.ResponseWriter, r *http.Request)
-	GetProfilebyUsername(w http.ResponseWriter, r *http.Request)
+type AccController interface {
 	GetUsernameByAccount(w http.ResponseWriter, r *http.Request)
 	GetUserPhoneNumber(w http.ResponseWriter, r *http.Request)
 }
