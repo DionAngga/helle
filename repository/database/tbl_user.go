@@ -1,9 +1,9 @@
 package database
 
 import (
-	"helle/entity/request"
+	"helle/entity/database"
 )
 
 type UserRepository interface {
-	FindUser(client string) (*request.User, error)
+	FindUser(client string) (*database.User, error)
 }
