@@ -11,10 +11,10 @@ import (
 )
 
 type controller struct {
-	usecase usecase.Usecase
+	usecase usecase.ProfileUseCase
 }
 
-func New(usecase usecase.Usecase) *controller {
+func New(usecase usecase.ProfileUseCase) *controller {
 	return &controller{usecase}
 }
 

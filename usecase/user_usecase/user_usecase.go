@@ -16,26 +16,9 @@ func New(repositorys repositorymysql.UserRepository, repositoryacc repositorymys
 	return &usecase{repositorys, repositoryacc, respositoryprofile}
 }
 
-func (u *usecase) GetInquiry(client request.User) (*request.User, error) {
+func (u *usecase) GetInquiry(client *request.User) (*database.User, error) {
 	input := client
 	user, err := u.userRepository.FindUser(input.Client)
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
-}
-
-func (u *usecase) GetProfile(username *request.Name) (*database.TblUserProfile, error) {
-	input := username
-	user, err := u.profileRepository.FindProfile(input.Username)
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
-}
-
-func (u *usecase) GetUsername(account string) (*database.TblUserAccount, error) {
-	user, err := u.accRepository.FindUsername(account)
 	if err != nil {
 		return nil, err
 	}

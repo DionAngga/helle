@@ -15,7 +15,9 @@ import (
 	tbluser "helle/repository/database/mysql/tbl_user"
 	tbluseraccount "helle/repository/database/mysql/tbl_user_account"
 	tbluserprofile "helle/repository/database/mysql/tbl_user_profile"
-	usecase "helle/usecase/user_usecase"
+	accUsercase "helle/usecase/acc_usecase"
+	profileUsecase "helle/usecase/profile_usecase"
+	userUsecase "helle/usecase/user_usecase"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -53,14 +55,16 @@ func main() {
 	userRepository := tbluser.New(db)
 	userAccountRepository := tbluseraccount.New(db)
 	userProfileRepository := tbluserprofile.New(db)
-	userUsecase := usecase.New(userRepository, userAccountRepository, userProfileRepository)
+	userUsecase := userUsecase.New(userRepository, userAccountRepository, userProfileRepository)
+	accUsecase := accUsercase.New(userAccountRepository)
+	profileUsecase := profileUsecase.New(userProfileRepository)
 	userController := userController.New(userUsecase)
-	accController := accController.New(userUsecase)
-	profileController := profileController.New(userUsecase)
+	accController := accController.New(accUsecase)
+	profileController := profileController.New(profileUsecase)
 	r.HandleFunc("/user/inquiry", userController.GetInquirybyaccount).Methods("POST")
 	r.HandleFunc("/user/profile", profileController.GetProfilebyUsername).Methods("POST")
 	r.HandleFunc("/user/username_byaccount", accController.GetUsernameByAccount).Methods("POST")
-	r.HandleFunc("/user/inquiry_hp_byaccount", accController.GetUserPhoneNumber).Methods("POST")
+	r.HandleFunc("/user/inquiry_hp_byaccount", userController.GetUserPhoneNumber).Methods("POST")
 
 	log.Println("Database connected", PORT)
 	log.Fatal(http.ListenAndServe(PORT, r))
