@@ -29,8 +29,6 @@ func main() {
 	PORT := os.Getenv("PORT")
 	r := mux.NewRouter()
 	DNS := os.Getenv("DNS")
-	fmt.Println("ssssss", PORT, DNS)
-	fmt.Println("saaaaaaaaaaaaaaaaaaaa", os.Getenv("JAVA_HOME"))
 	db, err := gorm.Open(mysql.Open(DNS), &gorm.Config{})
 	if err != nil {
 		fmt.Println(err.Error())

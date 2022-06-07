@@ -21,28 +21,28 @@ func New(usecase usecase.UserUsecase) *controller {
 	return &controller{usecase}
 }
 
+func handleError(err interface{}) {
+	if err != nil {
+		fmt.Println("error")
+	}
+}
+
 func (c *controller) GetInquirybyaccount(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var user *request.User
 	err := json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
-		fmt.Println("error")
-		return
-	}
+	handleError(err)
 	User, err := c.usecase.GetInquiry(user)
-	if err != nil {
-		return
-	}
-	_ = json.NewEncoder(w).Encode(User)
+	handleError(err)
+	err = json.NewEncoder(w).Encode(User)
+	handleError(err)
 }
 
 func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) {
 	user := request.User{}
 	w.Header().Add("Content-Type", "application/json")
 	err := json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
-		fmt.Println("error")
-	}
+	handleError(err)
 	valid := validator.New()
 	err = valid.Struct(user)
 	respon_id := uuid.New().String()
@@ -55,7 +55,8 @@ func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) 
 			ResponseRefnum: user.RequestRefnum,
 			ResponseData:   err.Error(),
 		}
-		_ = json.NewEncoder(w).Encode(Response)
+		err = json.NewEncoder(w).Encode(Response)
+		handleError(err)
 		return
 
 	}
@@ -69,7 +70,8 @@ func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) 
 			ResponseRefnum: user.RequestRefnum,
 			ResponseData:   err,
 		}
-		_ = json.NewEncoder(w).Encode(Response)
+		err = json.NewEncoder(w).Encode(Response)
+		handleError(err)
 		return
 	}
 	if User.Username == "" {
@@ -80,7 +82,8 @@ func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) 
 			ResponseRefnum: user.RequestRefnum,
 			ResponseData:   response.Emtpy{},
 		}
-		_ = json.NewEncoder(w).Encode(Response)
+		err = json.NewEncoder(w).Encode(Response)
+		handleError(err)
 		return
 	}
 	if User != nil {
@@ -94,7 +97,8 @@ func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) 
 				EmailAddress: User.EmailAddress,
 			},
 		}
-		_ = json.NewEncoder(w).Encode(&Response)
+		err = json.NewEncoder(w).Encode(&Response)
+		handleError(err)
 	}
 
 }
