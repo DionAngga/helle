@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"helle/entity/database"
-	"helle/entity/response"
 	"helle/usecase"
 	"net/http"
 )
@@ -17,29 +16,23 @@ func New(usecase usecase.AccUsecase) *controller {
 	return &controller{usecase}
 }
 
+//dari fungsi ini kita membuat macam2 error untuk menghandle error
+func handleError(err interface{}) {
+	if err != nil {
+		fmt.Println("error")
+	}
+}
+
 func (c *controller) GetUsernameByAccount(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var user *database.TblUserAccount
 	err := json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
-		fmt.Println("error")
-		return
-	}
-	defer r.Body.Close()
+	handleError(err)
 
 	User, err := c.usecase.GetUsername(user.Account)
-	if err != nil {
-		respon := response.Response{}
-		respon.ResponseCode = "99"
-		_, _ = w.Write([]byte(respon.ResponseCode))
-		return
-	}
+	handleError(err)
 
-	// tambah error validation
-
-	errs := json.NewEncoder(w).Encode(&User)
-	if errs != nil {
-		fmt.Println("error")
-	}
+	err = json.NewEncoder(w).Encode(&User)
+	handleError(err)
 }

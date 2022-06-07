@@ -19,6 +19,12 @@ func New(usecase usecase.ProfileUseCase) *controller {
 	return &controller{usecase}
 }
 
+func handleError(err interface{}) {
+	if err != nil {
+		fmt.Println("error")
+	}
+}
+
 func (c *controller) GetProfilebyUsername(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var user *request.Name
@@ -31,18 +37,24 @@ func (c *controller) GetProfilebyUsername(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		w.Header().Add("Content-Type", "application/json")
 		responseBody := err
-		_ = json.NewEncoder(w).Encode(responseBody)
-	} else {
-		User, err := c.usecase.GetProfile(user)
-		if err != nil {
-			responseBody := response.Validate{Validation: "error", Field: "gorm"}
-			_ = json.NewEncoder(w).Encode(responseBody)
-		}
-		if User.Username == "" {
-			responseBody := response.Validate{Validation: "error", Field: "username not found"}
-			_ = json.NewEncoder(w).Encode(responseBody)
-		} else {
-			_ = json.NewEncoder(w).Encode(&User)
-		}
+		err = json.NewEncoder(w).Encode(responseBody)
+		handleError(err)
+		return
 	}
+
+	User, err := c.usecase.GetProfile(user)
+	if err != nil {
+		responseBody := response.Validate{Validation: "error", Field: "gorm"}
+		err = json.NewEncoder(w).Encode(responseBody)
+		handleError(err)
+		return
+	}
+	if User.Username == "" {
+		responseBody := response.Validate{Validation: "error", Field: "username not found"}
+		err = json.NewEncoder(w).Encode(responseBody)
+		handleError(err)
+	}
+	err = json.NewEncoder(w).Encode(&User)
+	handleError(err)
+
 }
