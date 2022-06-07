@@ -23,35 +23,20 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
 )
 
-func DNS() string {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-	return os.Getenv("DNS")
-}
-
-func PORT() string {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-	return os.Getenv("PORT")
-}
-
 func main() {
-	PORT := PORT()
+	PORT := os.Getenv("PORT")
 	r := mux.NewRouter()
-	DNS := DNS()
+	DNS := os.Getenv("DNS")
+	fmt.Println("ssssss", PORT, DNS)
+	fmt.Println("saaaaaaaaaaaaaaaaaaaa", os.Getenv("JAVA_HOME"))
 	db, err := gorm.Open(mysql.Open(DNS), &gorm.Config{})
 	if err != nil {
 		fmt.Println(err.Error())
 		panic("failed to connect database")
 	}
-	db.AutoMigrate(&request.User{})
+	_ = db.AutoMigrate(&request.User{})
 	userRepository := tbluser.New(db)
 	userAccountRepository := tbluseraccount.New(db)
 	userProfileRepository := tbluserprofile.New(db)
