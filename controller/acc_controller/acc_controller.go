@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"helle/entity/database"
 	"helle/entity/response"
 	"helle/usecase"
@@ -20,18 +21,25 @@ func (c *controller) GetUsernameByAccount(w http.ResponseWriter, r *http.Request
 	w.Header().Set("Content-Type", "application/json")
 
 	var user *database.TblUserAccount
-	json.NewDecoder(r.Body).Decode(user)
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		fmt.Println("error")
+		return
+	}
+	defer r.Body.Close()
 
 	User, err := c.usecase.GetUsername(user.Account)
 	if err != nil {
-		responseBody := response.Validate{Validation: "error", Field: "gorm"}
-		json.NewEncoder(w).Encode(responseBody)
+		respon := response.Response{}
+		respon.ResponseCode = "99"
+		_, _ = w.Write([]byte(respon.ResponseCode))
+		return
 	}
 
-	if User.Username == "" {
-		responseBody := response.Validate{Validation: "error", Field: "username not found"}
-		json.NewEncoder(w).Encode(responseBody)
-	} else {
-		json.NewEncoder(w).Encode(&User)
+	// tambah error validation
+
+	errs := json.NewEncoder(w).Encode(&User)
+	if errs != nil {
+		fmt.Println("error")
 	}
 }

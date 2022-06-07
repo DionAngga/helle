@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"helle/entity/request"
 	"helle/entity/response"
 	"helle/usecase"
@@ -23,20 +24,27 @@ func New(usecase usecase.UserUsecase) *controller {
 func (c *controller) GetInquirybyaccount(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var user *request.User
-	json.NewDecoder(r.Body).Decode(&user)
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		fmt.Println("error")
+		return
+	}
 	User, err := c.usecase.GetInquiry(user)
 	if err != nil {
 		return
 	}
-	json.NewEncoder(w).Encode(User)
+	_ = json.NewEncoder(w).Encode(User)
 }
 
 func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) {
 	user := request.User{}
 	w.Header().Add("Content-Type", "application/json")
-	json.NewDecoder(r.Body).Decode(&user)
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		fmt.Println("error")
+	}
 	valid := validator.New()
-	err := valid.Struct(user)
+	err = valid.Struct(user)
 	respon_id := uuid.New().String()
 	uuidWithoutHyphens := strings.Replace(respon_id, "-", "", -1)
 	if err != nil {
@@ -47,7 +55,7 @@ func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) 
 			ResponseRefnum: user.RequestRefnum,
 			ResponseData:   err.Error(),
 		}
-		json.NewEncoder(w).Encode(Response)
+		_ = json.NewEncoder(w).Encode(Response)
 		return
 
 	}
@@ -61,7 +69,7 @@ func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) 
 			ResponseRefnum: user.RequestRefnum,
 			ResponseData:   err,
 		}
-		json.NewEncoder(w).Encode(Response)
+		_ = json.NewEncoder(w).Encode(Response)
 		return
 	}
 	if User.Username == "" {
@@ -72,7 +80,7 @@ func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) 
 			ResponseRefnum: user.RequestRefnum,
 			ResponseData:   response.Emtpy{},
 		}
-		json.NewEncoder(w).Encode(Response)
+		_ = json.NewEncoder(w).Encode(Response)
 		return
 	}
 	if User != nil {
@@ -86,7 +94,7 @@ func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) 
 				EmailAddress: User.EmailAddress,
 			},
 		}
-		json.NewEncoder(w).Encode(&Response)
+		_ = json.NewEncoder(w).Encode(&Response)
 	}
 
 }
