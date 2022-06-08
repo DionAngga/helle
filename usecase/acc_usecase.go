@@ -1,9 +1,10 @@
 package usecase
 
 import (
-	"helle/entity/database"
+	"helle/entity/request"
+	"helle/entity/response"
 )
 
 type AccUsecase interface {
-	GetUsername(account string) (*database.TblUserAccount, error)
+	FindUsername(account *request.User) (*response.Response, error)
 }
