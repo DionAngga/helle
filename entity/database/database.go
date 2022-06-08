@@ -28,14 +28,3 @@ type TblUserAccount struct {
 	Default         int    `json:"default"`
 	ScCode          string `json:"sc_code"`
 }
-
-type User struct {
-	Client          string `json:"client"`
-	AccountNumber   string `json:"account_number"`
-	Timestamp       string `json:"timestamp"`
-	ResponseRefnum  string `json:"response_refnum"`
-	ResponseId      string `json:"response_id"`
-	CellphoneNumber string `json:"cellphone_number"`
-	EmailAddress    string `json:"email_address"`
-	Refnum          string `json:"refnum"`
-}

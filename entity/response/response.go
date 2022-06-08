@@ -34,3 +34,13 @@ type Validate struct {
 }
 
 type Emtpy struct{}
+
+func (r *Response) New(id, refnum string) *Response {
+	return &Response{
+		ResponseCode:   "xx",
+		ResponseDesc:   "general error",
+		ResponseId:     id,
+		ResponseRefnum: refnum,
+		ResponseData:   Emtpy{},
+	}
+}
