@@ -7,5 +7,7 @@ type User struct {
 }
 
 type Name struct {
-	Username string `json:"username" validate:"required"`
+	Client        string `json:"client" validate:"required"`
+	Username      string `json:"username" validate:"required"`
+	RequestRefnum string `json:"request_refnum" validate:"required"`
 }
