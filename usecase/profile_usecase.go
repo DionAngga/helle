@@ -1,10 +1,11 @@
 package usecase
 
 import (
-	"helle/entity/database"
 	"helle/entity/request"
+	"helle/entity/response"
 )
 
 type ProfileUseCase interface {
-	GetProfile(username *request.Name) (*database.TblUserProfile, error)
+	FindProfile(username *request.Name) (*response.Response, error)
+	FindUserPhoneNumber(account *request.User) (*response.Response, error)
 }
