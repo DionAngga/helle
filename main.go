@@ -8,7 +8,6 @@ import (
 
 	accController "helle/controller/acc_controller"
 	profileController "helle/controller/profile_controller"
-	"helle/entity/database"
 
 	//repositorymysql "helle/repository/database"
 
@@ -24,17 +23,13 @@ import (
 )
 
 func main() {
-	PORT := os.Getenv("PORT")
+	port := os.Getenv("PORT")
 	r := mux.NewRouter()
-	DNS := os.Getenv("DNS")
-	db, err := gorm.Open(mysql.Open(DNS), &gorm.Config{})
+	dns := os.Getenv("DNS")
+	db, err := gorm.Open(mysql.Open(dns), &gorm.Config{})
 	if err != nil {
 		fmt.Println(err.Error())
 		panic("failed to connect database")
-	}
-	err = db.AutoMigrate(&database.TblUserAccount{})
-	if err != nil {
-		fmt.Println("error")
 	}
 	userAccountRepository := tbluseraccount.New(db)
 	userProfileRepository := tbluserprofile.New(db)
@@ -46,7 +41,7 @@ func main() {
 	r.HandleFunc("/user/username_byaccount", accController.GetUsernameByAccount).Methods("POST")
 	r.HandleFunc("/user/inquiry_hp_byaccount", profileController.GetUserPhoneNumber).Methods("POST")
 
-	log.Println("Database connected", PORT)
-	log.Fatal(http.ListenAndServe(PORT, r))
+	log.Println("Database connected", port)
+	log.Fatal(http.ListenAndServe(port, r))
 
 }
