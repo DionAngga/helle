@@ -52,7 +52,7 @@ func (c *controller) GetProfilebyUsername(w http.ResponseWriter, r *http.Request
 }
 
 func (c *controller) GetUserPhoneNumber(w http.ResponseWriter, r *http.Request) {
-	rqst := request.User{}
+	rqst := request.Acc{}
 	w.Header().Add("Content-Type", "application/json")
 	_ = json.NewDecoder(r.Body).Decode(&rqst)
 	valid := validator.New()
