@@ -24,36 +24,35 @@ func New(usecase usecase.AccUsecase) *controller {
 func (c *controller) GetUsernameByAccount(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	var rqst *request.User
+	id := uuid.New().String()
+	uuidWithoutHyphens := strings.Replace(id, "-", "", -1)
+	rspn := response.New(uuidWithoutHyphens)
+
+	var rqst *request.Acc
 	err := json.NewDecoder(r.Body).Decode(&rqst)
-
 	if err != nil {
-		fmt.Println("error")
+		rspn.SetResponseCode("GE")
+		rspn.SetResponseDesc("General Error: " + err.Error())
+		_ = json.NewEncoder(w).Encode(rspn)
+		return
 	}
-
+	rqst.RequestId = uuidWithoutHyphens
+	fmt.Println("rqst: ", rqst)
 	valid := validator.New()
-	respon_id := uuid.New().String()
-	uuidWithoutHyphens := strings.Replace(respon_id, "-", "", -1)
-	rspn := response.Response{}
-	rspn.New(respon_id, rqst.RequestRefnum)
-
 	err = valid.Struct(rqst)
 	if err != nil {
-		Response := response.Response{
-			ResponseCode:   "VE",
-			ResponseDesc:   "fail on validation",
-			ResponseId:     uuidWithoutHyphens,
-			ResponseRefnum: rqst.RequestRefnum,
-			ResponseData:   err.Error(),
-		}
-		_ = json.NewEncoder(w).Encode(&Response)
+		rspn.SetResponseCode("VE")
+		rspn.SetResponseDesc("fail on validation")
+		rspn.SetResponseData(err.Error())
+		_ = json.NewEncoder(w).Encode(&rspn)
 		return
 	}
 
-	user, err := c.usecase.FindUsername(rqst)
+	rspn.SetResponseRefnum(rqst.RequestRefnum)
+	err := c.usecase.FindUsername(rqst, rspn)
 	if err != nil {
 		fmt.Println("error")
 	}
-	_ = json.NewEncoder(w).Encode(&user)
+	_ = json.NewEncoder(w).Encode(&rspn)
 
 }

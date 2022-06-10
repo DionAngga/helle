@@ -43,7 +43,7 @@ func (u *profileUsecase) FindProfile(rqst *request.Name) (*response.Response, er
 	return &Response, nil
 }
 
-func (u *profileUsecase) FindUserPhoneNumber(rqst *request.User) (*response.Response, error) {
+func (u *profileUsecase) FindUserPhoneNumber(rqst *request.Acc) (*response.Response, error) {
 	respon_id := uuid.New().String()
 	uuidWithoutHyphens := strings.Replace(respon_id, "-", "", -1)
 	user, err := u.accRepository.FindUsername(rqst.AccountNumber)
