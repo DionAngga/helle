@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"helle/entity/request"
 	"helle/entity/response"
 	"helle/usecase"
@@ -37,7 +36,7 @@ func (c *controller) GetUsernameByAccount(w http.ResponseWriter, r *http.Request
 		return
 	}
 	rqst.RequestId = uuidWithoutHyphens
-	fmt.Println("rqst: ", rqst)
+
 	valid := validator.New()
 	err = valid.Struct(rqst)
 	if err != nil {
@@ -49,10 +48,7 @@ func (c *controller) GetUsernameByAccount(w http.ResponseWriter, r *http.Request
 	}
 
 	rspn.SetResponseRefnum(rqst.RequestRefnum)
-	err := c.usecase.FindUsername(rqst, rspn)
-	if err != nil {
-		fmt.Println("error")
-	}
+	c.usecase.FindUsername(rqst, rspn)
 	_ = json.NewEncoder(w).Encode(&rspn)
 
 }

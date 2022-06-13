@@ -4,6 +4,8 @@ import (
 	"helle/entity/request"
 	"helle/entity/response"
 	repositorymysql "helle/repository/database"
+
+	"gorm.io/gorm"
 )
 
 type accUsecase struct {
@@ -14,25 +16,23 @@ func New(accrepository repositorymysql.UserAccountRepository) *accUsecase {
 	return &accUsecase{accrepository}
 }
 
-func (u *accUsecase) FindUsername(rqst *request.Acc, id *response.Response) error {
+func (u *accUsecase) FindUsername(rqst *request.Acc, rspn *response.Response) {
 
 	user, err := u.accRepository.FindUsername(rqst.AccountNumber)
-	if err != nil || user == nil {
-		Response := response.Response{
-			ResponseCode:   "AN",
-			ResponseDesc:   "Account Number Not Found",
-			ResponseRefnum: rqst.RequestRefnum,
-			ResponseData:   response.Emtpy{},
-		}
-		return err
+
+	if err != nil && err == gorm.ErrRecordNotFound {
+		rspn.SetResponseCode("AN")
+		rspn.SetResponseDesc("Account Number not found")
+		return
 	}
 
-	Response := response.Response{
-		ResponseCode:   "00",
-		ResponseDesc:   "Get Phone By Accnum Success",
-		ResponseRefnum: rqst.RequestRefnum,
-		ResponseData:   response.Name{Username: user.Username},
+	if err != nil {
+		rspn.SetResponseCode("DF")
+		rspn.SetResponseDesc("Database Failure: " + err.Error())
+		return
 	}
-	return &Response, err
 
+	rspn.SetResponseCode("00")
+	rspn.SetResponseDesc("Get Phone By Accnum Success")
+	rspn.SetResponseData(response.Name{Username: user.Username})
 }

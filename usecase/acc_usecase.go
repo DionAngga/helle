@@ -6,5 +6,5 @@ import (
 )
 
 type AccUsecase interface {
-	FindUsername(account *request.Acc, id *response.Response) (*response.Response, error)
+	FindUsername(account *request.Acc, id *response.Response)
 }
