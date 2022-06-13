@@ -16,6 +16,6 @@ func New(db *gorm.DB) *repository {
 
 func (r *repository) FindUsername(account string) (*database.TblUserAccount, error) {
 	var acc database.TblUserAccount
-	err := r.DB.Where("account = ?", account).Find(&acc).Error
-	return &acc, err
+	dbres := r.DB.Where("account = ?", account).First(&acc)
+	return &acc, dbres.Error
 }
