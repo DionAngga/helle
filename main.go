@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 
 	accController "helle/controller/acc_controller"
 	profileController "helle/controller/profile_controller"
+
+	"github.com/sirupsen/logrus"
 
 	//repositorymysql "helle/repository/database"
 
@@ -31,6 +32,20 @@ func main() {
 		fmt.Println(err.Error())
 		panic("failed to connect database")
 	}
+
+	log := logrus.New()
+	log.SetFormatter(&logrus.JSONFormatter{
+		FieldMap: logrus.FieldMap{
+			logrus.FieldKeyTime:  "timestamp",
+			logrus.FieldKeyMsg:   "message",
+			logrus.FieldKeyLevel: "level",
+		},
+	})
+	log.SetFormatter(&logrus.TextFormatter{
+		DisableColors: true,
+		FullTimestamp: true,
+	})
+
 	userAccountRepository := tbluseraccount.New(db)
 	userProfileRepository := tbluserprofile.New(db)
 	accUsecase := accUsercase.New(userAccountRepository)
@@ -40,8 +55,6 @@ func main() {
 	r.HandleFunc("/user/profile_byprofile", profileController.GetProfilebyUsername).Methods("POST")
 	r.HandleFunc("/user/username_byaccount", accController.GetUsernameByAccount).Methods("POST")
 	r.HandleFunc("/user/inquiry_hp_byaccount", profileController.GetUserPhoneNumber).Methods("POST")
-
-	log.Println("Database connected", port)
+	log.Info("Database connected", port)
 	log.Fatal(http.ListenAndServe(port, r))
-
 }

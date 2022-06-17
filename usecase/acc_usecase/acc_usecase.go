@@ -5,6 +5,7 @@ import (
 	"helle/entity/response"
 	repositorymysql "helle/repository/database"
 
+	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
@@ -17,6 +18,13 @@ func New(accrepository repositorymysql.UserAccountRepository) *accUsecase {
 }
 
 func (u *accUsecase) FindUsername(rqst *request.Acc, rspn *response.Response) {
+	log := logrus.New()
+	log.SetFormatter(&logrus.JSONFormatter{
+		FieldMap: logrus.FieldMap{
+			logrus.FieldKeyTime: "timestamp",
+			logrus.FieldKeyMsg:  "message",
+		},
+	})
 
 	user, err := u.accRepository.FindUsername(rqst.AccountNumber)
 
@@ -35,4 +43,5 @@ func (u *accUsecase) FindUsername(rqst *request.Acc, rspn *response.Response) {
 	rspn.SetResponseCode("00")
 	rspn.SetResponseDesc("Get Phone By Accnum Success")
 	rspn.SetResponseData(response.Name{Username: user.Username})
+
 }
