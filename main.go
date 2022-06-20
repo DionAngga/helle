@@ -46,6 +46,12 @@ func main() {
 		FullTimestamp: true,
 	})
 
+	if os.Getenv("PORT") == "dev" {
+		log.SetLevel(logrus.DebugLevel)
+	} else {
+		log.SetLevel(logrus.InfoLevel)
+	}
+
 	userAccountRepository := tbluseraccount.New(db)
 	userProfileRepository := tbluserprofile.New(db)
 	accUsecase := accUsercase.New(userAccountRepository)
@@ -55,6 +61,7 @@ func main() {
 	r.HandleFunc("/user/profile_byprofile", profileController.GetProfilebyUsername).Methods("POST")
 	r.HandleFunc("/user/username_byaccount", accController.GetUsernameByAccount).Methods("POST")
 	r.HandleFunc("/user/inquiry_hp_byaccount", profileController.GetUserPhoneNumber).Methods("POST")
-	log.Info("Database connected", port)
+	log.Debug("Database connected", port)
+	log.Info("Server started on port", port)
 	log.Fatal(http.ListenAndServe(port, r))
 }

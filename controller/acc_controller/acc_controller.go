@@ -41,8 +41,7 @@ func (c *controller) GetUsernameByAccount(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		rspn.SetResponseCode("GE")
 		rspn.SetResponseDesc("General Error: " + err.Error())
-		_ = json.NewEncoder(w).Encode(rspn)
-		log.Error("response: General Errorcontroller")
+		rspn.SendResponse(w)
 		return
 	}
 	rqst.RequestId = uuidWithoutHyphens

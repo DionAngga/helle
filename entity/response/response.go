@@ -1,5 +1,10 @@
 package response
 
+import (
+	"encoding/json"
+	"net/http"
+)
+
 type Response struct {
 	ResponseCode   string      `json:"response_code"`
 	ResponseDesc   string      `json:"response_desc"`
@@ -59,4 +64,10 @@ func (r *Response) SetResponseData(data interface{}) {
 
 func (r *Response) SetResponseRefnum(refnum string) {
 	r.ResponseRefnum = refnum
+}
+
+func (r *Response) SendResponse(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(r)
 }
