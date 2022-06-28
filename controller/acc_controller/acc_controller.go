@@ -10,7 +10,6 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
-	"github.com/sirupsen/logrus"
 )
 
 type controller struct {
@@ -24,27 +23,20 @@ func New(usecase usecase.AccUsecase) *controller {
 func (c *controller) GetUsernameByAccount(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	log := logrus.New()
-	log.SetFormatter(&logrus.JSONFormatter{
-		FieldMap: logrus.FieldMap{
-			logrus.FieldKeyTime: "timestamp",
-			logrus.FieldKeyMsg:  "message",
-		},
-	})
-
 	id := uuid.New().String()
 	uuidWithoutHyphens := strings.Replace(id, "-", "", -1)
 	rspn := response.New(uuidWithoutHyphens)
 	var rqst *request.Acc
-	log.Info("request: ", rqst)
 	err := json.NewDecoder(r.Body).Decode(&rqst)
+	rqst.RequestId = uuidWithoutHyphens
+	request.SendRequest(rqst)
 	if err != nil {
 		rspn.SetResponseCode("GE")
 		rspn.SetResponseDesc("General Error: " + err.Error())
-		rspn.SendResponse(w)
+		rspn.SendResponse(err.Error())
+		_ = json.NewEncoder(w).Encode(err.Error())
 		return
 	}
-	rqst.RequestId = uuidWithoutHyphens
 
 	valid := validator.New()
 	err = valid.Struct(rqst)
@@ -52,14 +44,14 @@ func (c *controller) GetUsernameByAccount(w http.ResponseWriter, r *http.Request
 		rspn.SetResponseCode("VE")
 		rspn.SetResponseDesc("fail on validation")
 		rspn.SetResponseData(err.Error())
-		_ = json.NewEncoder(w).Encode(&rspn)
-		log.Error("response: fail on validation")
+		rspn.SendResponse(err.Error())
+		_ = json.NewEncoder(w).Encode(err.Error())
 		return
 	}
 
 	rspn.SetResponseRefnum(rqst.RequestRefnum)
 	c.usecase.FindUsername(rqst, rspn)
+	rspn.SendResponse(rspn)
 	_ = json.NewEncoder(w).Encode(&rspn)
-	log.Info("response: ", rspn)
 
 }
