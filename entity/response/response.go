@@ -2,7 +2,8 @@ package response
 
 import (
 	"encoding/json"
-	"net/http"
+
+	"github.com/sirupsen/logrus"
 )
 
 type Response struct {
@@ -66,8 +67,15 @@ func (r *Response) SetResponseRefnum(refnum string) {
 	r.ResponseRefnum = refnum
 }
 
-func (r *Response) SendResponse(w http.ResponseWriter) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(r)
+func (r *Response) SendResponse(result interface{}) {
+
+	log := logrus.New()
+	log.SetFormatter(&logrus.JSONFormatter{
+		FieldMap: logrus.FieldMap{
+			logrus.FieldKeyTime: "timestamp",
+			logrus.FieldKeyMsg:  "message",
+		},
+	})
+	js, _ := json.Marshal(result)
+	log.Info("response: ", string(js))
 }

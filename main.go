@@ -2,11 +2,14 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 
 	accController "helle/controller/acc_controller"
 	profileController "helle/controller/profile_controller"
+
+	loggers "helle/log"
 
 	"github.com/sirupsen/logrus"
 
@@ -19,38 +22,33 @@ import (
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"github.com/gorilla/mux"
 )
+
+func init() {
+	loggers.Init()
+}
 
 func main() {
 	port := os.Getenv("PORT")
 	r := mux.NewRouter()
 	dns := os.Getenv("DNS")
-	db, err := gorm.Open(mysql.Open(dns), &gorm.Config{})
+
+	db, err := gorm.Open(mysql.Open(dns), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
 	if err != nil {
 		fmt.Println(err.Error())
 		panic("failed to connect database")
 	}
 
-	log := logrus.New()
-	log.SetFormatter(&logrus.JSONFormatter{
-		FieldMap: logrus.FieldMap{
-			logrus.FieldKeyTime:  "timestamp",
-			logrus.FieldKeyMsg:   "message",
-			logrus.FieldKeyLevel: "level",
-		},
-	})
-	log.SetFormatter(&logrus.TextFormatter{
-		DisableColors: true,
-		FullTimestamp: true,
-	})
-
-	if os.Getenv("PORT") == "dev" {
-		log.SetLevel(logrus.DebugLevel)
-	} else {
-		log.SetLevel(logrus.InfoLevel)
-	}
+	// if os.GetEnv("ENV") == "dev" {
+	// 	log.SetLevel(logrus.DebugLevel)
+	// } else {
+	// 	log.SetLevel(logrus.InfoLevel)
+	// }
 
 	userAccountRepository := tbluseraccount.New(db)
 	userProfileRepository := tbluserprofile.New(db)
@@ -61,7 +59,13 @@ func main() {
 	r.HandleFunc("/user/profile_byprofile", profileController.GetProfilebyUsername).Methods("POST")
 	r.HandleFunc("/user/username_byaccount", accController.GetUsernameByAccount).Methods("POST")
 	r.HandleFunc("/user/inquiry_hp_byaccount", profileController.GetUserPhoneNumber).Methods("POST")
-	log.Debug("Database connected", port)
-	log.Info("Server started on port", port)
+
+	if os.Getenv("ENV") == "development" {
+		//fmt.Println("development mode")
+		// loggers.LogDebug(`Server started on port : ` + port)
+		logrus.Info("Server started on port : " + port)
+	}
+
+	fmt.Println("Hello World")
 	log.Fatal(http.ListenAndServe(port, r))
 }
