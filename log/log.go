@@ -3,7 +3,6 @@ package log
 import (
 	"encoding/json"
 	"fmt"
-	"helle/entity/response"
 	"net/http"
 	"os"
 	"time"
@@ -38,7 +37,7 @@ func LogWarn(err, location string) {
 	}).Warn("WARNING")
 }
 
-func LogResponse(req *http.Request, deviceID, username, trx_type, code string, response *response.Response, header http.Header) {
+func LogResponse(req *http.Request, deviceID, username, trx_type, code string, response interface{}, header http.Header) {
 	timestamp := setLogFile()
 	// trace, _ := context.Get(req, "trace").([]interface{})
 	logJSON.WithFields(log.Fields{

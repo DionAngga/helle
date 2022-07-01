@@ -11,8 +11,6 @@ import (
 
 	loggers "helle/log"
 
-	"github.com/sirupsen/logrus"
-
 	//repositorymysql "helle/repository/database"
 
 	tbluseraccount "helle/repository/database/mysql/tbl_user_account"
@@ -60,12 +58,6 @@ func main() {
 	r.HandleFunc("/user/username_byaccount", accController.GetUsernameByAccount).Methods("POST")
 	r.HandleFunc("/user/inquiry_hp_byaccount", profileController.GetUserPhoneNumber).Methods("POST")
 
-	if os.Getenv("ENV") == "development" {
-		//fmt.Println("development mode")
-		// loggers.LogDebug(`Server started on port : ` + port)
-		logrus.Info("Server started on port : " + port)
-	}
-
-	fmt.Println("Hello World")
+	loggers.LogDebug(`Server started on port` + port)
 	log.Fatal(http.ListenAndServe(port, r))
 }
