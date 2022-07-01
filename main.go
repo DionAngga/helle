@@ -42,12 +42,6 @@ func main() {
 		panic("failed to connect database")
 	}
 
-	// if os.GetEnv("ENV") == "dev" {
-	// 	log.SetLevel(logrus.DebugLevel)
-	// } else {
-	// 	log.SetLevel(logrus.InfoLevel)
-	// }
-
 	userAccountRepository := tbluseraccount.New(db)
 	userProfileRepository := tbluserprofile.New(db)
 	accUsecase := accUsercase.New(userAccountRepository)
