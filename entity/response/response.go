@@ -71,10 +71,9 @@ func (r *Response) SetResponseRefnum(refnum string) {
 	r.ResponseRefnum = refnum
 }
 
-func (r *Response) SendResponse(result *Response) {
+func (r *Response) SendResponse(result *Response, w http.ResponseWriter) {
 	var req *http.Request
 	var header http.Header
-	var w http.ResponseWriter
 	//js, _ := json.Marshal(result)
 	loggers.LogResponse(req, "ideapad e7", "Dion", "inquiry_hp_byaccount", "00", result, header)
 
