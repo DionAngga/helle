@@ -33,8 +33,7 @@ func (c *controller) GetUsernameByAccount(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		rspn.SetResponseCode("GE")
 		rspn.SetResponseDesc("General Error: " + err.Error())
-		rspn.SendResponse(err.Error())
-		_ = json.NewEncoder(w).Encode(err.Error())
+		rspn.SendResponse(rspn)
 		return
 	}
 
@@ -44,14 +43,13 @@ func (c *controller) GetUsernameByAccount(w http.ResponseWriter, r *http.Request
 		rspn.SetResponseCode("VE")
 		rspn.SetResponseDesc("fail on validation")
 		rspn.SetResponseData(err.Error())
-		rspn.SendResponse(err.Error())
-		_ = json.NewEncoder(w).Encode(err.Error())
+		rspn.SendResponse(rspn)
+
 		return
 	}
 
 	rspn.SetResponseRefnum(rqst.RequestRefnum)
 	c.usecase.FindUsername(rqst, rspn)
 	rspn.SendResponse(rspn)
-	_ = json.NewEncoder(w).Encode(&rspn)
 
 }

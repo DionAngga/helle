@@ -50,6 +50,8 @@ func main() {
 	r.HandleFunc("/user/username_byaccount", accController.GetUsernameByAccount).Methods("POST")
 	r.HandleFunc("/user/inquiry_hp_byaccount", profileController.GetUserPhoneNumber).Methods("POST")
 
-	loggers.LogDebug(`Server started on port` + port)
+	(loggers.LogDebug(`Server started on port` + port))
+	log.Println(`Server started on port` + port)
+
 	log.Fatal(http.ListenAndServe(port, r))
 }

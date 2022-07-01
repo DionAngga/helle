@@ -1,8 +1,6 @@
 package request
 
 import (
-	"encoding/json"
-	"fmt"
 	loggers "helle/log"
 )
 
@@ -27,9 +25,8 @@ type Name struct {
 type InquiryHpByAccount struct{}
 
 func SendRequest(result interface{}) {
-	js, _ := json.Marshal(result)
 	loggers.LogRequest("ideapad e7", "Dion", "inquiry_hp_byaccount", result, nil)
-	fmt.Println(string(js))
+
 }
 
 // func SendRequest(result interface{}) {

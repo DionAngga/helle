@@ -1,6 +1,7 @@
 package response
 
 import (
+	"encoding/json"
 	loggers "helle/log"
 	"net/http"
 )
@@ -70,12 +71,18 @@ func (r *Response) SetResponseRefnum(refnum string) {
 	r.ResponseRefnum = refnum
 }
 
-func (r *Response) SendResponse(result interface{}) {
+func (r *Response) SendResponse(result *Response) {
 	var req *http.Request
 	var header http.Header
+	var w http.ResponseWriter
 	//js, _ := json.Marshal(result)
 	loggers.LogResponse(req, "ideapad e7", "Dion", "inquiry_hp_byaccount", "00", result, header)
 
+	_ = json.NewEncoder(w).Encode(&result)
+	// if err != nil {
+	// 	fmt.Println("error")
+	// }
+	// return err
 	// log := logrus.New()
 	// log.SetFormatter(&logrus.JSONFormatter{
 	// 	FieldMap: logrus.FieldMap{
