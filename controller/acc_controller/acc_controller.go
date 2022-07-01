@@ -19,6 +19,8 @@ type controller struct {
 func New(usecase usecase.AccUsecase) *controller {
 	return &controller{usecase}
 }
+/aa
+
 
 func (c *controller) GetUsernameByAccount(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
