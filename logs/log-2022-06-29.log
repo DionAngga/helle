@@ -1,0 +1,9 @@
+level=debug msg=2022-06-29T10:48:14+0700 [] Server started on port : : 8080
+level=debug msg=2022-06-29T10:49:11+0700 [] Server started on port : : 8080
+level=debug msg=2022-06-29T10:51:37+0700 [] Server started on port : : 8080
+level=debug msg=2022-06-29T11:12:16+0700 [] Server started on port: 8080
+level=debug msg=2022-06-29T11:35:07+0700 [] Server started on port: 8080
+{"device_id":"ideapad e7","http_type":"REQUEST","level":"info","msg":"REQUEST","request_body":null,"request_header":null,"service":"","timestamp":"2022-06-29T11:37:43+0700","trx_type":"inquiry_hp_byaccount","username":"Dion"}
+level=debug msg=2022-06-29T15:47:25+0700 [] Server started on port: 8080
+{"device_id":"ideapad e7","http_type":"REQUEST","level":"info","msg":"REQUEST","request_body":null,"request_header":null,"service":"","timestamp":"2022-06-29T15:47:41+0700","trx_type":"inquiry_hp_byaccount","username":"Dion"}
+{"device_id":"ideapad e7","http_type":"RESPONSE","level":"info","msg":"RESPONSE","response_body":{"response_code":"00","response_desc":"Get Phone By Accnum Success","response_id":"84fd771c61584bd5884dffe12103dbea","response_refnum":"327012257122","response_data":{"username":"pmstes1212"}},"response_code":"00","response_header":null,"service":"","timestamp":"2022-06-29T15:47:41+0700","trx_type":"inquiry_hp_byaccount","username":"Dion"}

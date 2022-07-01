@@ -2,9 +2,13 @@ package response
 
 import (
 	"encoding/json"
-
-	"github.com/sirupsen/logrus"
+	loggers "helle/log"
+	"net/http"
 )
+
+func init() {
+	loggers.Init()
+}
 
 type Response struct {
 	ResponseCode   string      `json:"response_code"`
@@ -67,15 +71,24 @@ func (r *Response) SetResponseRefnum(refnum string) {
 	r.ResponseRefnum = refnum
 }
 
-func (r *Response) SendResponse(result interface{}) {
+func (r *Response) SendResponse(result *Response, w http.ResponseWriter) {
+	var req *http.Request
+	var header http.Header
+	//js, _ := json.Marshal(result)
+	loggers.LogResponse(req, "ideapad e7", "Dion", "inquiry_hp_byaccount", "00", result, header)
 
-	log := logrus.New()
-	log.SetFormatter(&logrus.JSONFormatter{
-		FieldMap: logrus.FieldMap{
-			logrus.FieldKeyTime: "timestamp",
-			logrus.FieldKeyMsg:  "message",
-		},
-	})
-	js, _ := json.Marshal(result)
-	log.Info("response: ", string(js))
+	_ = json.NewEncoder(w).Encode(&result)
+	// if err != nil {
+	// 	fmt.Println("error")
+	// }
+	// return err
+	// log := logrus.New()
+	// log.SetFormatter(&logrus.JSONFormatter{
+	// 	FieldMap: logrus.FieldMap{
+	// 		logrus.FieldKeyTime: "timestamp",
+	// 		logrus.FieldKeyMsg:  "message",
+	// 	},
+	// })
+	// js, _ := json.Marshal(result)
+	// log.Info("response: ", string(js))
 }

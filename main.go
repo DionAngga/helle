@@ -11,10 +11,6 @@ import (
 
 	loggers "helle/log"
 
-	"github.com/sirupsen/logrus"
-
-	//repositorymysql "helle/repository/database"
-
 	tbluseraccount "helle/repository/database/mysql/tbl_user_account"
 	tbluserprofile "helle/repository/database/mysql/tbl_user_profile"
 	accUsercase "helle/usecase/acc_usecase"
@@ -44,12 +40,6 @@ func main() {
 		panic("failed to connect database")
 	}
 
-	// if os.GetEnv("ENV") == "dev" {
-	// 	log.SetLevel(logrus.DebugLevel)
-	// } else {
-	// 	log.SetLevel(logrus.InfoLevel)
-	// }
-
 	userAccountRepository := tbluseraccount.New(db)
 	userProfileRepository := tbluserprofile.New(db)
 	accUsecase := accUsercase.New(userAccountRepository)
@@ -60,12 +50,8 @@ func main() {
 	r.HandleFunc("/user/username_byaccount", accController.GetUsernameByAccount).Methods("POST")
 	r.HandleFunc("/user/inquiry_hp_byaccount", profileController.GetUserPhoneNumber).Methods("POST")
 
-	if os.Getenv("ENV") == "development" {
-		//fmt.Println("development mode")
-		// loggers.LogDebug(`Server started on port : ` + port)
-		logrus.Info("Server started on port : " + port)
-	}
+	(loggers.LogDebug(`Server started on port` + port))
+	log.Println(`Server started on port` + port)
 
-	fmt.Println("Hello World")
 	log.Fatal(http.ListenAndServe(port, r))
 }
