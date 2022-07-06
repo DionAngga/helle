@@ -2,6 +2,7 @@ package request
 
 import (
 	loggers "helle/log"
+	"net/http"
 )
 
 func init() {
@@ -24,8 +25,8 @@ type Name struct {
 
 type InquiryHpByAccount struct{}
 
-func SendRequest(result interface{}) {
-	loggers.LogRequest("ideapad e7", "Dion", "inquiry_hp_byaccount", result, nil)
+func SendRequest(result interface{}, r *http.Request) {
+	loggers.LogRequest("ideapad e7", "Dion", "inquiry_hp_byaccount", result, r.Header)
 
 }
 

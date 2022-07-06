@@ -28,11 +28,12 @@ func (c *controller) GetUsernameByAccount(w http.ResponseWriter, r *http.Request
 	var rqst *request.Acc
 	err := json.NewDecoder(r.Body).Decode(&rqst)
 	rqst.RequestId = uuidWithoutHyphens
-	request.SendRequest(rqst)
+	request.SendRequest(rqst, r)
 	if err != nil {
 		rspn.SetResponseCode("GE")
 		rspn.SetResponseDesc("General Error: " + err.Error())
 		rspn.SendResponse(rspn, w)
+
 		return
 	}
 
