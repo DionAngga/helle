@@ -2,6 +2,7 @@ package response
 
 import (
 	"encoding/json"
+	"fmt"
 	loggers "helle/log"
 	"net/http"
 )
@@ -73,10 +74,10 @@ func (r *Response) SetResponseRefnum(refnum string) {
 
 func (r *Response) SendResponse(result *Response, w http.ResponseWriter) {
 	var req *http.Request
-	var header http.Header
+	//var header http.Header
 	//js, _ := json.Marshal(result)
-	loggers.LogResponse(req, "ideapad e7", "Dion", "inquiry_hp_byaccount", "00", result, header)
-
+	loggers.LogResponse(req, "ideapad e7", "Dion", "inquiry_hp_byaccount", "00", result, w.Header())
+	fmt.Println("Headerrrrr==", w.Header())
 	_ = json.NewEncoder(w).Encode(&result)
 	// if err != nil {
 	// 	fmt.Println("error")
